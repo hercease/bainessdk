@@ -1,0 +1,17 @@
+<head><script defer src="/paymentsdk.js"></script></head><button onclick="handlePayment()">Pay Now</button>
+
+    <script src="paymentsdk.js"></script>
+    <script>
+        function handlePayment() {
+        openPaymentPopup({
+            merchant_email: 'hercease@yahoo.com',
+            product_image: 'https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png',
+            product_price: 70000,
+            product_description: 'Very good for your body and skin care',
+            product_name: 'Skin Care Product',
+            api_key: '9352b572fd12a08d96b62fd59641097da50b6de707c14bf529b3af15f38cad11'
+        }, function(response) {
+            console.log(response.status);
+        });
+    }
+    </script>

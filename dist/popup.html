@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Popup</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/izitoast/dist/css/iziToast.min.css">
+    <style>
+        form .error {
+			color: #ff0000;
+		}
+
+        /* Centering the loader */
+        .loader-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            display: none; /* Initially hidden */
+            z-index: 9999;
+        }
+
+        /* Rotating Circle */
+        .rotating-circle {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 5px solid transparent;
+            border-top: 5px solid #009fff;
+            border-right: 5px solid #0a58ca;
+            animation: spin 1.5s linear infinite;
+        }
+
+        /* Static Logo in Center */
+        .loader-wrapper {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo {
+            position: absolute;
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+            border-radius: 50%;
+        }
+
+        /* Spinning Animation */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Loading Text */
+        .loading-text {
+            margin-top: 10px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="loader-container">
+        <div class="loader-wrapper">
+            <div class="rotating-circle"></div>
+            <img src="https://assetfinance.bainescredit.com/public/main/img/favicon.ico" alt="Finance Logo" class="logo">
+        </div>
+        <div class="loading-text"></div>
+    </div>
+
+    <div class="container p-2">
+        <form id="checkout">
+            <div class="card mb-3">
+        
+                <div class="card-body">  
+                <h5 class="card-header">Personal Details</h5>
+                  <div class="mb-3">
+                    <label class="form-label">Title</label>
+                    <select class="form-select" name="finance_title" id="finance_title">
+                      <option value="">Select Title</option>
+                      <option value="Mr">Mr</option>
+                      <option value="Mrs">Mrs</option>
+                      <option value="Miss">Miss</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Firstname</label>
+                    <input type="text" class="form-control form-control-rounded" autocomplete="off" name="finance_firstname" id="finance_firstname" placeholder="Firstname">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Middle name</label>
+                    <input type="text" class="form-control" autocomplete="off" name="finance_middlename" id="finance_middlename" placeholder="Middlename">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Surname</label>
+                    <input type="text" class="form-control" autocomplete="off" name="finance_surname" id="finance_surname" placeholder="Surname">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Date of Birth</label>
+                    <input type="date" class="form-control" name="finance_dob" id="finance_dob" placeholder="Date of birth">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">State of Origin</label>
+                    <select class="form-select" name="finance_state" id="finance_state">
+                      <option value="">Select State</option>
+                      <option value="Abia">Abia</option>
+                      <option value="Adamawa">Adamawa</option>
+                      <option value="Akwa Ibom">Akwa Ibom</option>
+                      <option value="Anambra">Anambra</option>
+                      <option value="Bauchi">Bauchi</option>
+                      <option value="Bayelsa">Bayelsa</option>
+                      <option value="Benue">Benue</option>
+                      <option value="Borno">Borno</option>
+                      <option value="Cross River">Cross River</option>
+                      <option value="Delta">Delta</option>
+                      <option value="Ebonyi">Ebonyi</option>
+                      <option value="Edo">Edo</option>
+                      <option value="Ekiti">Ekiti</option>
+                      <option value="Enugu">Enugu</option>
+                      <option value="Gombe">Gombe</option>
+                      <option value="Imo">Imo</option>
+                      <option value="Jigawa">Jigawa</option>
+                      <option value="Kaduna">Kaduna</option>
+                      <option value="Kano">Katsina</option>
+                      <option value="Kebbi">Kebbi</option>
+                      <option value="Kogi">Kogi</option>
+                      <option value="Kwara">Kwara</option>
+                      <option value="Lagos">Lagos</option>
+                      <option value="Nasarawa">Nasarawa</option>
+                      <option value="Niger">Niger</option>
+                      <option value="Ogun">Ogun</option>
+                      <option value="Ondo">Ondo</option>
+                      <option value="Osun">Osun</option>
+                      <option value="Oyo">Oyo</option>
+                      <option value="Plateaus">Plateaus</option>
+                      <option value="Rivers">Rivers</option>
+                      <option value="Sokoto">Sokoto</option>
+                      <option value="Taraba">Taraba</option>
+                      <option value="Yobe">Yobe</option>
+                      <option value="Zamfara">Zamfara</option>
+                      <option value="Abuja">Abuja</option>
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Marital Status</label>
+                    <select class="form-select" name="finance_marital" id="finance_marital">
+                      <option value="">Marital Status</option>
+                      <option value="Married">Married</option>
+                      <option value="Single">Single</option>
+                      <option value="Separated">Separated</option>
+                      <option value="Divorced">Divorced</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Gender</label>
+                    <select class="form-select" name="finance_gender" id="finance_gender">
+                      <option value="">Select Gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">BVN No</label>
+                    <input type="number" class="form-control" autocomplete="off" name="finance_bvn" id="finance_bvn" placeholder="BVN number">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Phone</label>
+                    <input type="number" class="form-control" autocomplete="off" min="0" name="finance_phone" id="finance_phone" placeholder="Phone number">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Means of identification</label>
+                    <select class="form-select" name="finance_identity" id="finance_identity">
+                      <option value="">Means of Identification</option>
+                      <option value="Passport">Passport</option>
+                      <option value="Driver Licence">Driver's licence</option>
+                      <option value="National ID Card">National ID Card</option>
+                    </select>
+                  </div>
+      
+                    <input type="hidden" id="totprice" readonly="readonly" />
+                    <input type="hidden" id="interest_rate" readonly="readonly" />
+                    <input type="hidden" id="insurance" readonly="readonly" />
+                    <input type="hidden" id="final_insurance" readonly="readonly" />
+                    <input type="hidden" id="finance_product_title" name="finance_product_title" readonly="readonly" />
+                    <input type="hidden" id="finance_product_description" name="finance_product_description" readonly="readonly" />
+                    <input type="hidden" id="finance_product_price" name="finance_product_price" readonly="readonly" />
+                    <input type="hidden" id="finance_product_url" name="finance_product_url" readonly="readonly" />
+                    <input type="hidden" id="finance_merchant_email" name="finance_merchant_email" readonly="readonly" />
+                      
+                    <input type="hidden" class="form-control form-control-rounded form-control-sm" name="finance_amount" id="finance_amount" />
+                    <input type="hidden" name="total" id="totalprice" class="form-control" readonly="readonly" />
+                    <input type="hidden" name="payment_time" id="payment_time" value="" />
+                  
+                  <div id="issue" style="display:none" class="mb-3">
+                    <label class="form-label">Issue Date</label>
+                    <input type="date" class="form-control" name="finance_issue" id="finance_issue" placeholder="Issue Date">
+                  </div>
+                  <div id="expiry" style="display:none" class="mb-3">
+                    <label class="form-label">Expiry Date</label>
+                    <input type="date" class="form-control" name="finance_expiry" id="finance_expiry" placeholder="Expiry date">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">ID number</label>
+                    <input type="number" class="form-control" autocomplete="off" min="0" name="finance_idnumber" id="finance_idnumber" placeholder="ID number">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Number of Dependents</label>
+                    <input type="number" class="form-control" autocomplete="off" min="1" name="finance_dependents" id="finance_dependents" placeholder="Number of dependents">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Primary Email Address</label>
+                    <input type="email" class="form-control" autocomplete="off" name="finance_email" id="finance_email" placeholder="Primary Email Address">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Home Address</label>
+                    <input type="text" class="form-control" autocomplete="off" name="finance_address" id="finance_address" placeholder="Home Address">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Landmark/Nearest Bus-Stop</label>
+                    <input type="text" class="form-control" autocomplete="off" name="finance_bustop" id="finance_bustop" placeholder="Landmark/Nearest Bus-Stop">
+                  </div>
+                  </div>
+                  </div>
+      
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-header">Employment Details</h5>
+                            <div class="form-group  mb-3">
+                                <label>Permanent Employment</label>
+                                <select class="form-control" name="finance_employment" id="finance_employment">
+                                    <option value="">Permanent Employment</option>
+                                    <option value="Employed">Employed</option>
+                                    <option value="Self Employed">Self Employed</option>
+                                    <option value="Unemployed">Unemployed</option>
+                                </select>
+                            </div>
+                            <div id="bus_type" style="display:none" class="form-group mb-3">
+                                <label>Business Type</label>
+                                <input type="text" autocomplete="off" class="form-control" name="finance_bus_type" id="finance_bus_type" placeholder="Business Type">
+                            </div>
+                            <div id="start_date" style="display:none" class="form-group mb-3">
+                                <label>Commencement date</label>
+                                <input type="date" class="form-control" name="finance_commence" id="finance_commence" placeholder="Commencement Date">
+                            </div>
+                            <div id="bus_address" style="display:none" class="form-group  mb-3">
+                                <label>Business Address</label>
+                                <input type="text" autocomplete="off" class="form-control" name="finance_bus_address" id="finance_bus_address" placeholder="Business Address">
+                            </div>
+                            <div id="employer" style="display:none" class="form-group  mb-3">
+                                <label>Current Employer</label>
+                                <input type="text" autocomplete="off" class="form-control" name="finance_employer" id="finance_employer" placeholder="Current Employer">
+                            </div>
+                            <div id="employment_date" style="display:none" class="form-group  mb-3">
+                                <label>Employment Date</label>
+                                <input type="text" autocomplete="off" class="form-control" name="finance_employment_date" id="finance_employment_date" placeholder="Emplyment date">
+                            </div>
+                            <div id="job_title" style="display:none" class="form-group mb-3">
+                                <label>Job Title/Position</label>
+                                <input type="text" autocomplete="off" class="form-control" name="finance_job_title" id="finance_job_title" placeholder="Job Title/Position">
+                            </div>
+                            <div id="office_address" style="display:none" class="form-group mb-3">
+                                <label>Office Address</label>
+                                <input type="text" autocomplete="off" class="form-control" name="finance_office_address" id="finance_office_address" placeholder="Office Address">
+                            </div>
+                            <div id="official_email" style="display:none" class="form-group mb-3">
+                                <label>Staff's Official Email</label>
+                                <input type="text" autocomplete="off" class="form-control" name="finance_official_email" id="finance_official_email" placeholder="Staff's Official Email">
+                            </div>
+                            <div class="form-group mb-3">
+                                <label>Level of Education</label>
+                                <select class="form-control" name="finance_education" id="finance_education">
+                                    <option value="">Level of Education</option>
+                                    <option value="SSCE">SSCE</option>
+                                    <option value="B.sc/HND">B.sc/HND</option>
+                                    <option value="M.sc">M.sc</option>
+                                    <option value="others">Others</option>
+                                </select>
+                            </div>
+                            <div id="education" style="display:none" class="form-group mb-3">
+                                <label>Specify Education Level</label>
+                                <input class="form-control" autocomplete="off" id="custom_education" name="custom_education" type="text" placeholder="Specify Education Level">
+                            </div>
+                    
+                        </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-header">Next of Kin Information</h5>
+                    <div class="form-group mb-3">
+                        <label>Next of Kin Name</label>
+                        <input type="text" autocomplete="off" class="form-select" name="finance_kin_name" id="finance_kin_name" placeholder="Next of Kin Name">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Is your Next of Kin ?</label>
+                        <select class="form-select" name="finance_kin" id="finance_kin">
+                            <option  value="">Is your Next of Kin</option>
+                            <option value="Sibling">Sibling</option>
+                            <option value="Parent">Parent</option>
+                            <option value="Spouse">Spouse</option>
+                            <option value="others">Others</option>
+                        </select>
+                    </div>
+                    
+                    <div id="kin" style="display:none" class="form-group mb-3">
+                        <label>Specify Next of Kin</label>
+                        <input class="form-control form-control-rounded form-control-sm" autocomplete="off" id="custom_kin" name="custom_kin" type="text" placeholder="Specify your Next of Kin">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Mobile Number</label>
+                        <input type="text" autocomplete="off" class="form-control" name="finance_kin_phone" id="finance_kin_phone" placeholder="Next of Kin Mobile Number">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Email Address</label>
+                        <input type="text" autocomplete="off" class="form-control" name="finance_kin_email" id="finance_kin_email" placeholder="Email Address">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Contact Address</label>
+                        <input type="text" autocomplete="off" class="form-control" name="finance_kin_address" id="finance_kin_address" placeholder="Next of Kin address">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h3 class="widget-title">Document Upload</h3>
+
+                    <div class="mb-3">
+                        <label for="finance_upload_identity" class="form-label">Upload means of Identification selected earlier</label>
+                        <input class="form-control" name="finance_upload_identity" accept="image/png, image/jpeg" id="finance_upload_identity" type="file">
+                      </div>
+                    <div class="mb-3">
+                          <label class="form-label" for="finance_upload_nepa">Upload recent electricity bill</label>
+                          <input class="form-control" type="file" name="finance_upload_nepa" id="finance_upload_nepa" accept="image/png, image/jpeg">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="finance_upload_statement">Upload recent Statement of account</label>
+                        <input class="form-control" type="file" name="finance_upload_statement" id="finance_upload_statement" accept="application/pdf,application/vnd.ms-excel">
+                    </div>
+                </div>
+            </div>
+
+            <div id="guarantor_form" style="display:none" class="card mb-3">
+                <div class="card-body mb-3"> 
+                    <h3 class="widget-title">Guarantor Information</h3>
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" class="form-control" name="finance_guarantor_name" id="finance_guarantor_name" placeholder="Enter your guarantor name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Address</label>
+                        <input type="text" class="form-control" name="finance_guarantor_address" id="finance_guarantor_address" placeholder="Enter your guarantor address">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Phone no</label>
+                        <input type="number" class="form-control" name="finance_guarantor_phone" id="finance_guarantor_phone" placeholder="Enter your guarantor phone">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="text" class="form-control" name="finance_guarantor_email" id="finance_guarantor_email" placeholder="Enter your guarantor email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Occupation</label>
+                        <input type="text" class="form-control" name="finance_guarantor_occupation" id="finance_guarantor_occupation" placeholder="Enter your guarantor occupation">
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h3 class="widget-title">Payment Plan</h3>
+                    <div class="mb-3">
+                        <label>Payment Period</label>
+                        <select class="form-control" name="finance_payment_period" id="finance_payment_period">
+                            <option value="">Select Payment Period</option>
+                            
+                        </select>
+                    </div>
+                    <div id="show_detail">
+                                        
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input required" type="checkbox" id="finance_checkbox" name="finance_checkbox">
+                            <label class="form-check-label" for="finance_checkbox">I agree with the Terms and Conditions of this platform and hereby confirm and certify that all information provided by me above and attend thereto is correct and complete. I authorize you to make any inquiry you consider necessary and appropriate for the purpose of evaluating this application.</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" name="submit" class="btn btn-primary w-100">Continue</button>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/izitoast/dist/js/iziToast.min.js"></script>
+    <script type="text/javascript" src="./jqueryvalidate.js"></script>
+    <script>
+        // Show the loader when the page loads
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelector('.loader-container').style.display = 'flex'; // Show the loader
+            $('.loading-text').text('Getting things ready, please wait');
+        });
+
+        // Hide the loader after 3 seconds (for demonstration purposes)
+        setTimeout(() => {
+            document.querySelector('.loader-container').style.display = 'none'; // Hide the loader
+        }, 5000); // Adjust this time as needed
+
+        // Uncomment this block to show a success message after payment completion
+       /* document.addEventListener("DOMContentLoaded", function () {
+            setTimeout(() => {
+                iziToast.success({
+                    title: 'Success',
+                    message: 'Payment was successful!',
+                    position: 'topRight',
+                    timeout: 5000, // 5 seconds
+                    onClosing: function () {
+                        // ✅ Send the response after iziToast disappears
+                        const response = { status: true, message: "Payment was successful" };
+                        window.parent.postMessage(response, window.location.origin);
+                    }
+                });
+            }, 3000);
+        });*/
+        // Get query parameters from URL
+        const urlParams = new URLSearchParams(window.location.search);
+
+        const merchant_email = urlParams.get("merchant_email");
+        const image_url = urlParams.get("image_url");
+        const price = urlParams.get("price");
+        const api_key = urlParams.get("api_key");
+        const period = urlParams.get("period");
+        const insurance_amount = urlParams.get("insurance_amount");
+        const interest_rate = urlParams.get("interest_rate");
+        const insurance = urlParams.get("insurance");
+        const description = urlParams.get("description");
+        const title = urlParams.get("name");
+
+        document.getElementById('finance_amount').value = price;
+        document.getElementById('finance_product_title').value = title;
+        document.getElementById('finance_product_description').value = description;
+        document.getElementById('finance_product_price').value = price;
+        document.getElementById('finance_product_url').value = image_url;
+        document.getElementById('finance_merchant_email').value = merchant_email;
+
+        if(price > 200000){
+          document.getElementById("guarantor_form").style.display = "block";;
+        }
+
+        // Select the dropdown and clear previous options
+        const paymentPeriodSelect = document.getElementById("finance_payment_period");
+            paymentPeriodSelect.innerHTML = '<option value="">Select Payment Period</option>';
+
+            // Generate options dynamically
+            for (let i = 1; i <= period; i++) {
+                const option = document.createElement("option");
+                option.value = i;
+                option.textContent = `${i} Month${i > 1 ? "s" : ""}`;
+                paymentPeriodSelect.appendChild(option);
+            }
+
+             // Show/hide issue and expiry date fields
+      document.getElementById("finance_identity").addEventListener("change", function (){
+        const issueDiv = document.getElementById("issue");
+        const expiryDiv = document.getElementById("expiry");
+        if (this.value !== "") {
+          issueDiv.style.display = "block";
+          expiryDiv.style.display = "block";
+        } else {
+          issueDiv.style.display = "none";
+          expiryDiv.style.display = "none";
+        }
+      });
+
+        document.getElementById("finance_identity").addEventListener("change", function () {
+            const issueDiv = document.getElementById("issue");
+            const expiryDiv = document.getElementById("expiry");
+
+            if (this.value === "Passport" || this.value === "Driver Licence") {
+                issueDiv.style.display = "block";
+                expiryDiv.style.display = "block";
+            } else {
+                issueDiv.style.display = "none";
+                expiryDiv.style.display = "none";
+            }
+        });
+
+        document.getElementById("finance_employment").addEventListener("change", function () {
+            const employer = document.getElementById("employer");
+            const employmentDate = document.getElementById("employment_date");
+            const jobTitle = document.getElementById("job_title");
+            const officeAddress = document.getElementById("office_address");
+            const officialEmail = document.getElementById("official_email");
+
+            if (this.value === "Employed") {
+                employer.style.display = "block";
+                employmentDate.style.display = "block";
+                jobTitle.style.display = "block";
+                officeAddress.style.display = "block";
+                officialEmail.style.display = "block";
+            } else {
+                employer.style.display = "none";
+                employmentDate.style.display = "none";
+                jobTitle.style.display = "none";
+                officeAddress.style.display = "none";
+                officialEmail.style.display = "none";
+            }
+        });
+
+        document.getElementById("finance_employment").addEventListener("change", function () {
+            const busType = document.getElementById("bus_type");
+            const startDate = document.getElementById("start_date");
+            const busAddress = document.getElementById("bus_address");
+
+            if (this.value === "Self Employed") {
+                busType.style.display = "block";
+                startDate.style.display = "block";
+                busAddress.style.display = "block";
+            } else {
+                busType.style.display = "none";
+                startDate.style.display = "none";
+                busAddress.style.display = "none";
+            }
+        });
+
+        document.getElementById("finance_education").addEventListener("change", function () {
+            const educationField = document.getElementById("education");
+
+            if (this.value === "others") {
+                educationField.style.display = "block";
+            } else {
+                educationField.style.display = "none";
+            }
+        });
+
+        document.getElementById("finance_kin").addEventListener("change", function () {
+            const kinField = document.getElementById("kin");
+
+            if (this.value === "others") {
+                kinField.style.display = "block";
+            } else {
+                kinField.style.display = "none";
+            }
+        });
+
+        function updateFileName(input) {
+            const fileName = input.value.split('\\').pop(); // Get the file name
+            const label = input.parentElement.querySelector('.custom-file-label'); // Find the label sibling
+            if (label) {
+                label.textContent = fileName; // Update the label text
+            }
+        }
+
+        document.addEventListener('change', function(event) {
+            const target = event.target;
+            const ids = ['finance_upload_statement', 'finance_upload_nepa', 'finance_upload_identity'];
+
+            if (ids.includes(target.id)) {
+                updateFileName(target);
+            }
+        });
+        
+        function numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        document.getElementById('finance_payment_period').addEventListener('change', function() {
+            const value = this.value; // Get the selected value
+            document.querySelector('input#payment_time').value = value; // Set the value of the input field
+        });
+
+        document.getElementById('finance_payment_period').addEventListener('change', function() {
+            const value = this.value; // Get the selected value
+            const totPrice = urlParams.get("price");
+            const interest = urlParams.get("interest_rate");
+            const insurance = urlParams.get("insurance");
+            const final_insurance = urlParams.get("insurance_amount");
+            console.log(totPrice);
+
+
+            const subtotal = Number(totPrice) + Number(interest) * Number(value);
+            const total = Number(totPrice) + Number(final_insurance) + Number(interest) * Number(value);
+
+            const t = parseFloat(Number(totPrice / value) + Number(interest)).toFixed(2);
+
+            let tr_str = '<section class="widget widget-order-summary"><table class="table"><tbody>';
+            tr_str += '<tr><td>Insurance</td><td>' + insurance + '%</td></tr>';
+            tr_str += '<tr><td>Insurance amount</td><td>&#8358;' + numberWithCommas(final_insurance) + '</td></tr>';
+            tr_str += '<tr><td class="widget-title">Repayment Plan</td></tr>';
+            for (let i = 1; i <= value; i++) {
+                let payment_time;
+                if (i === 1) {
+                    payment_time = 'st';
+                } else if (i === 2) {
+                    payment_time = 'nd';
+                } else if (i === 3) {
+                    payment_time = 'rd';
+                } else {
+                    payment_time = 'th';
+                }
+
+                tr_str += '<tr><td>' + i + payment_time + ' Payment</td> <td>&#8358;' + numberWithCommas(t) + '</td></tr>';
+            }
+            tr_str += '<tr><td>Subtotal</td><td>&#8358;' + numberWithCommas(subtotal.toFixed(2)) + '</td></tr>';
+
+            tr_str += '<tr><td>TOTAL </td><td>&#8358;' + numberWithCommas(total) + '</td></tr>';
+            tr_str += '</tbody></table></section>';
+            document.getElementById('show_detail').innerHTML = tr_str;
+            document.getElementById('totalprice').value = total;
+            document.querySelector('input#payment_time').value = value;
+        });
+
+        $("#checkout").validate({
+            // Specify validation rules
+            rules: {
+            finance_title: "required",
+            finance_firstname: "required",
+            finance_middlename: "required",
+            finance_surname: "required",
+            finance_dob: "required",
+            finance_state: "required",
+            finance_marital: "required",
+            finance_gender: "required",
+            finance_bvn: {
+                required: true,
+                minlength: 11
+            },
+            finance_phone: {
+                required: true,
+                minlength: 11
+            },
+            finance_identity: "required",
+            finance_issue : {
+                required : {
+                    depends: function () {
+                                return ($("#finance_identity").val() == "Passport" ||  "Driver Licence");
+                        }
+                    }
+                },
+            finance_expiry : {
+                required : {
+                    depends: function () {
+                                return ($("#finance_identity").val() == "Passport" || "Driver Licence");
+                        }
+                    }
+                },
+            finance_idnumber: "required",
+            finance_dependents: "required",
+            finance_email: "required",
+            finance_address: "required",
+            finance_bustop: "required",
+            finance_employment: "required",
+            finance_employer : {
+                required : {
+                    depends: function () {
+                                return ($("#finance_employment").val() == "Employed" || $("#finance_employment").val() == "Self Employed");
+                        }
+                    }
+                },
+            finance_employment_date : {
+                required : {
+                    depends: function () {
+                                return ($("#finance_employment").val() == "Employed" || $("#finance_employment").val() == "Self Employed");
+                        }
+                    }
+                },
+            finance_job_title : {
+                required : {
+                    depends: function () {
+                                return ($("#finance_employment").val() == "Employed" || $("#finance_employment").val() == "Self Employed");
+                        }
+                    }
+                },
+            finance_office_address : {
+                required : {
+                    depends: function () {
+                                return ($("#finance_employment").val() == "Employed" || $("#finance_employment").val() == "Self Employed");
+                        }
+                    }
+                },
+            finance_official_email : {
+                required : {
+                    depends: function () {
+                                return ($("#finance_employment").val() == "Employed" || $("#finance_employment").val() == "Self Employed");
+                        }
+                    }
+                },
+            
+            finance_bus_type : {
+                required : {
+                    depends: function () {
+                                return ($("#finance_employment").val() == "Self Employed");
+                        }
+                    }
+                },
+            finance_commence : {
+                required : {
+                    depends: function () {
+                                return ($("#finance_employment").val() == "Self Employed");
+                        }
+                    }
+                },
+            finance_bus_address : {
+                required : {
+                    depends: function () {
+                                return ($("#finance_employment").val() == "Self Employed");
+                        }
+                    }
+                },
+            finance_kin_name: "required",
+            finance_kin: "required",
+            finance_education: "required",
+            custom_kin : {
+                required : {
+                    depends: function () {
+                                return ($("#finance_kin").val() == "others");
+                        }
+                    }
+                },
+            custom_education : {
+                required : {
+                    depends: function () {
+                                return ($("#finance_education").val() == "others");
+                        }
+                    }
+                },
+            finance_guarantor_name : {
+                required : {
+                    depends: function () {
+                                return ($("#finance_amount").val() >= 200000);
+                        }
+                    }
+                },
+            finance_guarantor_address : {
+                required : {
+                    depends: function () {
+                                return ($("#finance_amount").val() >= 200000);
+                        }
+                    }
+                },
+            finance_guarantor_phone : {
+                required : {
+                    depends: function (){
+                                return ($("#finance_amount").val() >= 200000);
+                        }
+                    }
+                },
+            finance_guarantor_email : {
+                required : {
+                    depends: function () {
+                                return ($("#finance_amount").val() >= 200000);
+                        }
+                    }
+                },
+            finance_guarantor_occupation : {
+                required : {
+                    depends: function () {
+                                return ($("#finance_amount").val() >= 200000);
+                        }
+                    }
+                },
+            finance_kin_phone: "required",
+            finance_kin_email: "required",
+            finance_kin_address: "required",
+            finance_upload_identity: "required",
+            finance_upload_nepa: "required",
+            finance_upload_statement: "required",
+            finance_payment_period: "required",
+            finance_checkbox: "required"
+            },
+            
+            // Specify validation error messages
+            messages: {
+            finance_title : "Select your title",
+            finance_firstname : "Enter your firstname",
+            finance_middlename : "Enter your middlename",
+            finance_surname : "Enter your surname",
+            finance_dob : "Enter your date of birth",
+            finance_state : "Enter your state of origin",
+            finance_marital : "Select your marital status",
+            finance_gender : "Select your gender type",
+            finance_phone : {
+                required: "Please enter your phone number",
+                minlength: "Your phone number must be at least 11 characters"
+            },
+            finance_identity : "Select your means of identification",
+            finance_issue : "Enter date your means of identification was issued",
+            finance_expiry : "Enter date your means of identification will expire",
+            finance_idnumber : "Enter your means of identification number",
+            finance_dependents : "Enter the number of persons who depend on you",
+            finance_email : "Enter your email address",
+            finance_address : "Enter your home address",
+            finance_bustop : "Enter your nearest bus-stop",
+            finance_employment : "Choose your employment status",
+            finance_employer : "Enter your current employer",
+            finance_payment_period : "Select your payment period"
+            },
+            invalidHandler: function(event, validator) {
+                // 'validator.errorList' contains an array of the invalid fields
+                if (validator.errorList.length){
+                    // Focus the first invalid field
+                    $(validator.errorList[0].element).focus();
+                    //console.log($(validator.errorList[0].element));
+                }
+            
+            },
+            submitHandler: function(form){
+                SubmitForm(form);
+            }
+        });
+
+
+        function SubmitForm(form){
+			iziToast.question({
+				timeout: false,
+				close: false,
+				overlay: true,
+				displayMode: 'once',
+				id: 'question',
+				title: 'Confirmation',
+				message: 'Are you sure you want to proceed ? <br> Ensure you have a stable internet connection before proceeding.',
+				position: 'center',
+				buttons: [
+					['<button><b>Yes</b></button>', function (instance, toast){
+						instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+						
+						  //console.log("Yes clicked");
+						  var spinner = document.querySelector(".loader-container");
+						  var data = new FormData(form);
+						  let formObject = {};
+                            data.forEach((value, key) => {
+                                formObject[key] = value;
+                            });
+
+                            console.log(formObject);
+						// Run your AJAX function here
+							$.ajax({
+								type: "POST",
+								url: "http://localhost/bainesoop/processcheckout",
+								data: data,
+								contentType: false,// The content type used when sending data to the server.
+								cache: false,	// To unable request pages to be cached
+								processData:false,
+								beforeSend: function(){
+									spinner.style.display = "flex";
+								},
+								success: function(response){
+									spinner.style.display = "none";
+                                    $('<b>Please wait</b> Processing your request. Ensure you have a stable internet connection.').appendTo('.loading-text');
+                                    console.log(response);
+									try {
+                                        const res = JSON.parse(response); // Parse JSON response
+                                        switch (res.status) {
+                                            case true: // Success
+                                           
+                                                iziToast.success({
+                                                    title: 'Success',
+                                                    message: res.message,
+                                                    position: 'topRight',
+                                                    timeout: 5000, // 5 seconds
+                                                    onClosing: function () {
+                                                        // ✅ Send the response after iziToast disappears
+                                                        const response = { status: true, message: res.message };
+                                                        window.parent.postMessage(response, window.location.origin);
+                                                    }
+                                                });
+               
+                                                break;
+                                            case false: // Error
+                                                iziToast.error({
+                                                    title: 'Error',
+                                                    message: res.message,
+                                                });
+                                                break;
+                                            default: // Unknown response
+                                                iziToast.error({
+                                                    title: 'Error',
+                                                    message: "Unexpected response: " + res.message,
+                                                });
+                                        }
+                                    } catch (e) {
+                                        iziToast.error({
+                                            title: 'Error',
+                                            message: 'Invalid response from server.',
+                                        });
+                                        console.error("Response parsing error:", e);
+                                    }
+									
+								},
+								error: function(xhr, status, error){
+									// Handle error
+									iziToast.error({
+										title: 'Error',
+										message:"An unexpected error occurred, Can not process your request at the moment, kindly check your network",
+									});
+									
+									spinner.style.display = "none";
+								}
+						});
+
+					}, true],
+					['<button>No</button>', function (instance, toast) {
+						instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+					}]
+				],
+				onClosing: function(instance, toast, closedBy){
+					console.info('Closing | closedBy: ' + closedBy);
+				},
+				onClosed: function(instance, toast, closedBy){
+					console.info('Closed | closedBy: ' + closedBy);
+				}
+			});
+		}
+
+        
+
+
+    </script>
+</body>
+</html>
