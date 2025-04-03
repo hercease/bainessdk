@@ -1,8 +1,4 @@
-<head><script defer src="/paymentsdk.js"></script></head><button onclick="handlePayment()">Pay Now</button>
-
-    <script src="paymentsdk.js"></script>
-    <script>
-        function handlePayment() {
+<head><script defer="defer" src="/paymentsdk-1.0.0.min.js"></script></head><button onclick="handlePayment()">Pay Now</button><script src="paymentsdk.js"></script><script>function handlePayment() {
         openPaymentPopup({
             merchant_email: 'hercease@yahoo.com',
             product_image: 'https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png',
@@ -13,5 +9,4 @@
         }, function(response) {
             console.log(response.status);
         });
-    }
-    </script>
+    }</script>

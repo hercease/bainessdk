@@ -1,15 +1,15 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const webpack = require('webpack');
-const Dotenv = require('dotenv-webpack');
-require('dotenv').config();
-
+const TerserPlugin = require("terser-webpack-plugin");
+const CompressionPlugin = require("compression-webpack-plugin");
+const Dotenv = require("dotenv-webpack");
+const packageJson = require("./package.json"); // Import package.json
 
 module.exports = {
     entry: "./src/paymentsdk.js",
     output: {
         path: path.resolve(__dirname, "dist"),
-        filename: "paymentsdk.js",
+        filename: `paymentsdk-${packageJson.version}.min.js`, // Include version in filename
         publicPath: "/",
     },
     mode: "production",
@@ -21,7 +21,7 @@ module.exports = {
             },
             {
                 test: /\.scss$/,
-                use: ["style-loader", "css-loader", "sass-loader"], // For SCSS files
+                use: ["style-loader", "css-loader", "sass-loader"],
             },
             {
                 test: /\.(png|jpg|jpeg|gif)$/,
@@ -29,18 +29,23 @@ module.exports = {
             },
         ],
     },
+    optimization: {
+        minimize: true,
+        minimizer: [new TerserPlugin()],
+    },
     plugins: [
         new HtmlWebpackPlugin({
             template: "./src/index.html",
             filename: "index.html",
         }),
-        new Dotenv()
+        new CompressionPlugin({
+            algorithm: "gzip",
+            test: /\.(js|css|html|svg)$/,
+            threshold: 10240,
+            minRatio: 0.8,
+        }),
+        new Dotenv({
+            path: `.env.production`,
+        }),
     ],
-    devServer: {
-        static: path.resolve(__dirname, "dist"), // Serve static files from "dist"
-        open: true,
-        compress: true,
-        port: 8082, // Change if needed
-        hot: true,
-    },
 };
