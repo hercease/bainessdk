@@ -15,7 +15,7 @@ A JavaScript SDK for BainesCredit Microfinance Bank that enables merchants to of
 Add this script to your HTML file:
 
 ```html
-<script src="https://assetfinance.bainescredit.com/sdk/dist/paymentsdk.js"></script>
+<script src="https://assetfinance.bainescredit.com/sdk/dist/paymentsdk-1.0.0.min.js"></script>
 ```
 
 ## Usage
