@@ -1,12 +1,25 @@
-<head><script defer="defer" src="/paymentsdk-1.0.0.min.js"></script></head><button onclick="handlePayment()">Pay Now</button><script src="paymentsdk.js"></script><script>function handlePayment() {
-        openPaymentPopup({
-            merchant_email: 'hercease@yahoo.com',
-            product_image: 'https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png',
-            product_price: 70000,
-            product_description: 'Very good for your body and skin care',
-            product_name: 'Skin Care Product',
-            api_key: '9352b572fd12a08d96b62fd59641097da50b6de707c14bf529b3af15f38cad11'
-        }, function(response) {
-            console.log(response.status);
-        });
+<head><script defer="defer" src="/paymentsdk-1.0.0.min.js"></script></head><button onclick="handlePayment()">Pay Now</button><script>function handlePayment() {
+            openPaymentPopup({
+                merchant_email: 'hercease@yahoo.com',
+                products: [
+                    {
+                        title: 'Samsung Galaxy A14',
+                        price: 120000,
+                        description: 'Very good for your body and skin care',
+                        image_url: 'https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png',
+                        quantity: 2,
+                    },
+                    {
+                        title: 'Oraimo Power Bank 27000mAh',
+                        price: 25000,
+                        description: 'Very good for your body and skin care',
+                        image_url: 'https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png',
+                        quantity :1,
+                    },
+                ],
+                api_key: 'b6be48a347f7b0cd9554e931b8461018acd0c742507a0bc36de4cbf485543814'
+            }, function(response) {
+                console.log('Payment Status:', response.status);
+            });
+
     }</script>

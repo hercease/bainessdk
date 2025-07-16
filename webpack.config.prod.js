@@ -4,6 +4,7 @@ const TerserPlugin = require("terser-webpack-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
 const Dotenv = require("dotenv-webpack");
 const packageJson = require("./package.json"); // Import package.json
+const webpack = require("webpack");
 
 module.exports = {
     entry: "./src/paymentsdk.js",
@@ -43,6 +44,9 @@ module.exports = {
             test: /\.(js|css|html|svg)$/,
             threshold: 10240,
             minRatio: 0.8,
+        }),
+        new webpack.ProvidePlugin({
+            process: "process/browser"
         }),
         new Dotenv({
             path: `.env.production`,

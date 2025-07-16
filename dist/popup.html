@@ -194,17 +194,6 @@
                     </select>
                   </div>
       
-                    <input type="hidden" id="totprice" readonly="readonly" />
-                    <input type="hidden" id="interest_rate" readonly="readonly" />
-                    <input type="hidden" id="insurance" readonly="readonly" />
-                    <input type="hidden" id="final_insurance" readonly="readonly" />
-                    <input type="hidden" id="finance_product_title" name="finance_product_title" readonly="readonly" />
-                    <input type="hidden" id="finance_product_description" name="finance_product_description" readonly="readonly" />
-                    <input type="hidden" id="finance_product_price" name="finance_product_price" readonly="readonly" />
-                    <input type="hidden" id="finance_product_url" name="finance_product_url" readonly="readonly" />
-                    <input type="hidden" id="finance_merchant_email" name="finance_merchant_email" readonly="readonly" />
-                      
-                    <input type="hidden" class="form-control form-control-rounded form-control-sm" name="finance_amount" id="finance_amount" />
                     <input type="hidden" name="total" id="totalprice" class="form-control" readonly="readonly" />
                     <input type="hidden" name="payment_time" id="payment_time" value="" />
                   
@@ -417,15 +406,33 @@
     <script src="https://cdn.jsdelivr.net/npm/izitoast/dist/js/iziToast.min.js"></script>
     <script type="text/javascript" src="./jqueryvalidate.js"></script>
     <script>
-        // Show the loader when the page loads
+
         document.addEventListener("DOMContentLoaded", function () {
-            document.querySelector('.loader-container').style.display = 'flex'; // Show the loader
-            $('.loading-text').text('Getting things ready, please wait');
+            const loader = document.querySelector(".loader-container");
+            const loadingText = document.querySelector(".loading-text");
+
+            if (loader) loader.style.display = "flex"; // Show loader
+
+            // Optional message
+            if (loadingText) {
+
+             $('.loading-text').html('Getting things ready, please wait');
+
+            }
         });
+
+        // This will fire after ALL resources (images, iframes, CSS, etc.) are fully loaded
+        window.addEventListener("load", function () {
+            const loader = document.querySelector(".loader-container");
+            if (loader) loader.style.display = "none";
+        });
+
+
 
         // Hide the loader after 3 seconds (for demonstration purposes)
         setTimeout(() => {
             document.querySelector('.loader-container').style.display = 'none'; // Hide the loader
+            
         }, 5000); // Adjust this time as needed
 
         // Uncomment this block to show a success message after payment completion
@@ -445,7 +452,8 @@
             }, 3000);
         });*/
         // Get query parameters from URL
-        const urlParams = new URLSearchParams(window.location.search);
+      /*  
+      const urlParams = new URLSearchParams(window.location.search);
 
         const merchant_email = urlParams.get("merchant_email");
         const image_url = urlParams.get("image_url");
@@ -465,21 +473,91 @@
         document.getElementById('finance_product_url').value = image_url;
         document.getElementById('finance_merchant_email').value = merchant_email;
 
-        if(price > 200000){
-          document.getElementById("guarantor_form").style.display = "block";;
+    */
+    var period = 0;
+    var price = 0;
+    let trustedOrigin = null;
+
+    window.addEventListener("message", function (event) {
+        console.log(event.origin);
+        console.log(window.location.origin);
+
+        if (!trustedOrigin && event.data?.merchant_email) {
+            trustedOrigin = event.origin;
+            console.log("Trusted origin set to:", trustedOrigin);
         }
 
-        // Select the dropdown and clear previous options
-        const paymentPeriodSelect = document.getElementById("finance_payment_period");
-            paymentPeriodSelect.innerHTML = '<option value="">Select Payment Period</option>';
+        if (event.origin !== trustedOrigin) {
+            console.warn("Untrusted message from:", event.origin);
+            return;
+        }
 
-            // Generate options dynamically
-            for (let i = 1; i <= period; i++) {
-                const option = document.createElement("option");
-                option.value = i;
-                option.textContent = `${i} Month${i > 1 ? "s" : ""}`;
-                paymentPeriodSelect.appendChild(option);
+        const data = event.data;
+        if (!data?.merchant_email || !data?.products) {
+            console.log("Ignoring non-payment message:", data);
+            return;
+        }
+
+        console.log("Received data:", data);
+
+        const form = document.getElementById("checkout");
+
+        // Helper: create or update hidden input
+        function addHiddenInput(name, value) {
+            let input = form.querySelector(`input[name="${name}"]`);
+            if (!input) {
+                input = document.createElement("input");
+                input.type = "hidden";
+                input.name = name;
+                input.id = name;
+                form.appendChild(input);
             }
+            input.value = value;
+        }
+
+        // Add form inputs
+        addHiddenInput("finance_amount", data.total_price);
+        addHiddenInput("totprice", data.total_price);
+        addHiddenInput("finance_merchant_email", data.merchant_email);
+        addHiddenInput("insurance", data.insurance ?? 0);
+        addHiddenInput("final_insurance", data.insurance_amount ?? 0);
+        addHiddenInput("interest_rate", data.interest_rate ?? 0);
+        addHiddenInput("count", data.products.length ?? 0);
+        addHiddenInput("period", data.period ?? 0);
+
+        // Update variables
+        period = data.period;
+        price = data.total_price;
+
+        // Update select dropdown
+        const paymentPeriodSelect = document.getElementById("finance_payment_period");
+        paymentPeriodSelect.innerHTML = '<option value="">Select Payment Period</option>';
+        for (let i = 1; i <= period; i++) {
+            const option = document.createElement("option");
+            option.value = i;
+            option.textContent = `${i} Month${i > 1 ? "s" : ""}`;
+            paymentPeriodSelect.appendChild(option);
+        }
+
+        // Conditionally show guarantor form
+        if (price > 200000) {
+            document.getElementById("guarantor_form").style.display = "block";
+        }
+
+        // Add product info
+        if (Array.isArray(data.products)) {
+            data.products.forEach((product, index) => {
+                addHiddenInput(`title[${index}]`, product.title ?? "");
+                addHiddenInput(`description[${index}]`, product.description ?? "");
+                addHiddenInput(`price[${index}]`, product.price ?? 0);
+                addHiddenInput(`image_url[${index}]`, product.image_url ?? "");
+                addHiddenInput(`quantity[${index}]`, product.quantity ?? "");
+            });
+        }
+
+        window.__finance_data = data;
+    });
+
 
              // Show/hide issue and expiry date fields
       document.getElementById("finance_identity").addEventListener("change", function (){
@@ -592,13 +670,13 @@
         });
 
         document.getElementById('finance_payment_period').addEventListener('change', function() {
-            const value = this.value; // Get the selected value
-            const totPrice = urlParams.get("price");
-            const interest = urlParams.get("interest_rate");
-            const insurance = urlParams.get("insurance");
-            const final_insurance = urlParams.get("insurance_amount");
-            console.log(totPrice);
 
+            const value = this.value; // Get the selected value
+            const totPrice = $("#totprice").val();
+            const interest = $("#interest_rate").val();
+            const insurance = $("#insurance").val();
+            const final_insurance = $("#final_insurance").val();
+            console.log(totPrice);
 
             const subtotal = Number(totPrice) + Number(interest) * Number(value);
             const total = Number(totPrice) + Number(final_insurance) + Number(interest) * Number(value);
@@ -844,17 +922,19 @@
 				position: 'center',
 				buttons: [
 					['<button><b>Yes</b></button>', function (instance, toast){
+
 						instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
 						
 						  //console.log("Yes clicked");
 						  var spinner = document.querySelector(".loader-container");
 						  var data = new FormData(form);
+                          
 						  let formObject = {};
                             data.forEach((value, key) => {
                                 formObject[key] = value;
                             });
 
-                            console.log(formObject);
+                            //console.log(formObject);
 						// Run your AJAX function here
 							$.ajax({
 								type: "POST",
@@ -865,11 +945,13 @@
 								processData:false,
 								beforeSend: function(){
 									spinner.style.display = "flex";
+                                    $('.loading-text').html('<b>Please wait</b> Processing your request. Ensure you have a stable internet connection.');
 								},
 								success: function(response){
+
 									spinner.style.display = "none";
-                                    $('<b>Please wait</b> Processing your request. Ensure you have a stable internet connection.').appendTo('.loading-text');
-                                    console.log(response);
+                                    
+                                    //console.log(response);
 									try {
                                         const res = JSON.parse(response); // Parse JSON response
                                         switch (res.status) {
@@ -883,7 +965,7 @@
                                                     onClosing: function () {
                                                         // ✅ Send the response after iziToast disappears
                                                         const response = { status: true, message: res.message };
-                                                        window.parent.postMessage(response, window.location.origin);
+                                                        window.parent.postMessage(response, trustedOrigin);
                                                     }
                                                 });
                
