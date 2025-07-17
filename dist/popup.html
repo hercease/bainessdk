@@ -479,8 +479,8 @@
     let trustedOrigin = null;
 
     window.addEventListener("message", function (event) {
-        console.log(event.origin);
-        console.log(window.location.origin);
+        //console.log(event.origin);
+        //console.log(window.location.origin);
 
         if (!trustedOrigin && event.data?.merchant_email) {
             trustedOrigin = event.origin;
@@ -494,11 +494,11 @@
 
         const data = event.data;
         if (!data?.merchant_email || !data?.products) {
-            console.log("Ignoring non-payment message:", data);
+            //console.log("Ignoring non-payment message:", data);
             return;
         }
 
-        console.log("Received data:", data);
+        //console.log("Received data:", data);
 
         const form = document.getElementById("checkout");
 
@@ -676,7 +676,7 @@
             const interest = $("#interest_rate").val();
             const insurance = $("#insurance").val();
             const final_insurance = $("#final_insurance").val();
-            console.log(totPrice);
+            //console.log(totPrice);
 
             const subtotal = Number(totPrice) + Number(interest) * Number(value);
             const total = Number(totPrice) + Number(final_insurance) + Number(interest) * Number(value);
